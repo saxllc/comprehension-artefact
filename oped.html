@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India records consent. It does not record understanding.</title>
+<meta name="description" content="DPI built the world's best plumbing for permission. The missing record is comprehension — and India is the only country positioned to standardise it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000; --panel:#0d0d0f; --card:#151518; --line:#26262b;
+    --ink:#f5f5f7; --sec:#a1a1a6; --ter:#6e6e73;
+    --green:#9fe870; --green-d:#163300; --blue:#3b82f6; --orange:#FF6B00; --red:#ff453a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);overflow-x:hidden;}
+  ::selection{background:var(--green);color:var(--green-d);}
+
+  /* progress bar */
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--green);z-index:100;transition:width .1s linear;}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.2,.6,.2,1),transform .8s cubic-bezier(.2,.6,.2,1);}
+  .rv.in{opacity:1;transform:none;}
+  .rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.24s}.rv.d3{transition-delay:.36s}
+
+  .wrap{max-width:880px;margin:0 auto;padding:0 28px;}
+  .kick{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:16px;}
+
+  /* hero */
+  .hero{min-height:94vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:90px 24px 40px;position:relative;}
+  .hero h1{font-size:clamp(38px,7vw,84px);font-weight:800;line-height:1.04;letter-spacing:-.03em;max-width:980px;}
+  .hero h1 .dim{color:var(--ter);}
+  .hero .sub{margin-top:26px;font-size:clamp(16px,2.2vw,20px);line-height:1.55;color:var(--sec);max-width:620px;}
+  .hero .by{margin-top:30px;font-size:13px;color:var(--ter);letter-spacing:.04em;}
+  .hero .by b{color:var(--sec);font-weight:600;}
+  .hero .down{position:absolute;bottom:30px;color:var(--ter);font-size:12px;letter-spacing:.14em;text-transform:uppercase;animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+  /* scene */
+  .scene{padding:130px 0;}
+  .scene .line{font-size:clamp(22px,3.6vw,36px);font-weight:700;letter-spacing:-.015em;line-height:1.3;color:var(--ter);margin-bottom:30px;max-width:760px;}
+  .scene .line b{color:var(--ink);font-weight:700;}
+  .scene .punch{font-size:clamp(26px,4.4vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-top:50px;max-width:820px;}
+  .scene .punch em{font-style:normal;color:var(--green);}
+
+  section.block{padding:110px 0;border-top:1px solid var(--line);}
+  .block h2{font-size:clamp(28px,4.8vw,52px);font-weight:800;letter-spacing:-.025em;line-height:1.08;max-width:780px;}
+  .block .lead{margin-top:20px;font-size:17px;line-height:1.7;color:var(--sec);max-width:680px;}
+  .block .lead b{color:var(--ink);font-weight:600;}
+
+  .pull{margin:64px auto;padding:0 28px;max-width:920px;text-align:center;
+    font-size:clamp(22px,3.6vw,38px);font-weight:700;letter-spacing:-.018em;line-height:1.28;}
+  .pull em{font-style:normal;color:var(--green);}
+
+  /* prior art cards */
+  .arts{margin-top:50px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:780px){.arts{grid-template-columns:1fr;}}
+  .art{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;}
+  .art .f{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ter);margin-bottom:10px;}
+  .art h4{font-size:17px;font-weight:700;line-height:1.3;margin-bottom:8px;}
+  .art p{font-size:13.5px;line-height:1.65;color:var(--sec);}
+  .art.hi{border-color:rgba(159,232,112,.4);}
+  .artnote{margin-top:30px;font-size:16px;line-height:1.7;color:var(--sec);max-width:680px;}
+  .artnote b{color:var(--ink);}
+
+  /* odisha stat */
+  .stat{margin:70px auto 0;text-align:center;}
+  .stat .nums{display:flex;align-items:baseline;justify-content:center;gap:26px;flex-wrap:wrap;}
+  .stat .n{font-size:clamp(64px,11vw,130px);font-weight:800;letter-spacing:-.04em;line-height:1;}
+  .stat .n.from{color:var(--ter);} .stat .n.to{color:var(--green);}
+  .stat .arrow{font-size:clamp(30px,5vw,54px);color:var(--ter);}
+  .stat .cap{margin-top:18px;font-size:14px;color:var(--sec);max-width:560px;margin-left:auto;margin-right:auto;line-height:1.6;}
+
+  /* pairing */
+  .pair{margin-top:54px;display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:780px){.pair{grid-template-columns:1fr;}}
+  .pcard{border-radius:24px;padding:34px 30px;border:1px solid var(--line);background:var(--panel);position:relative;overflow:hidden;}
+  .pcard .glow{position:absolute;top:-110px;right:-110px;width:260px;height:260px;border-radius:50%;filter:blur(80px);opacity:.2;}
+  .pcard.c .glow{background:var(--blue);} .pcard.k .glow{background:var(--green);}
+  .pcard .t{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+  .pcard.c .t{color:var(--blue);} .pcard.k .t{color:var(--green);}
+  .pcard h3{font-size:24px;font-weight:800;letter-spacing:-.015em;margin-bottom:10px;}
+  .pcard .says{font-size:14px;line-height:1.6;color:var(--sec);font-style:italic;}
+  .pcard ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+  .pcard li{font-size:13.5px;line-height:1.5;color:var(--sec);padding-left:18px;position:relative;}
+  .pcard li::before{content:"–";position:absolute;left:2px;color:var(--ter);}
+  .pairline{margin-top:34px;text-align:center;font-size:16px;color:var(--sec);line-height:1.6;}
+  .pairline b{color:var(--ink);}
+
+  /* materiality strip */
+  .mat{margin-top:50px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  @media(max-width:780px){.mat{grid-template-columns:1fr 1fr;}}
+  .m{border-radius:16px;padding:22px 18px;border:1px solid var(--line);background:var(--card);}
+  .m .ml{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:9999px;padding:4px 10px;display:inline-block;margin-bottom:12px;}
+  .m1 .ml{background:rgba(159,232,112,.1);color:var(--green);}
+  .m2 .ml{background:rgba(59,130,246,.12);color:#7fb0ff;}
+  .m3 .ml{background:rgba(255,107,0,.12);color:var(--orange);}
+  .m4 .ml{background:rgba(255,69,58,.12);color:var(--red);}
+  .m p{font-size:12.5px;line-height:1.55;color:var(--sec);}
+
+  /* themes */
+  .themes{margin-top:50px;display:flex;flex-direction:column;gap:16px;}
+  .theme{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:34px 32px;display:grid;grid-template-columns:200px 1fr;gap:24px;}
+  @media(max-width:780px){.theme{grid-template-columns:1fr;gap:10px;}}
+  .theme .tt{font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:1.25;}
+  .theme .tt span{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ter);margin-top:8px;}
+  .theme p{font-size:14.5px;line-height:1.7;color:var(--sec);}
+  .theme p b{color:var(--ink);font-weight:600;}
+  .theme.var{border-color:rgba(159,232,112,.4);}
+  .theme.var .tt{color:var(--green);}
+
+  /* objection */
+  .obj{margin-top:46px;display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:780px){.obj{grid-template-columns:1fr;}}
+  .ob{border-radius:20px;padding:30px 28px;border:1px solid var(--line);}
+  .ob .ot{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;}
+  .ob.q{background:var(--card);} .ob.q .ot{color:var(--red);}
+  .ob.a{background:var(--panel);border-color:rgba(159,232,112,.35);} .ob.a .ot{color:var(--green);}
+  .ob p{font-size:14.5px;line-height:1.7;color:var(--sec);}
+  .ob p b{color:var(--ink);}
+
+  /* closing */
+  .close{padding:140px 0 110px;border-top:1px solid var(--line);text-align:center;}
+  .close h2{font-size:clamp(30px,5.4vw,62px);font-weight:800;letter-spacing:-.028em;line-height:1.1;max-width:860px;margin:0 auto;}
+  .close h2 em{font-style:normal;color:var(--green);}
+  .close .lead{margin:24px auto 0;font-size:17px;line-height:1.7;color:var(--sec);max-width:640px;}
+  .ctarow{margin-top:46px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .cta{display:inline-flex;align-items:center;gap:10px;border-radius:9999px;padding:16px 28px;font-size:15px;font-weight:700;text-decoration:none;transition:transform .2s,filter .2s;}
+  .cta:hover{transform:scale(1.04);filter:brightness(1.1);} .cta:active{transform:scale(.97);}
+  .cta.solid{background:var(--green);color:var(--green-d);}
+  .cta.ghost{background:transparent;color:var(--ink);border:1px solid #3a3a40;}
+
+  footer{border-top:1px solid var(--line);padding:48px 0 64px;text-align:center;color:var(--ter);font-size:12.5px;line-height:1.9;}
+  footer a{color:var(--sec);text-decoration:none;} footer a:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="kick rv">An argument · Journey Intelligence</div>
+  <h1 class="rv d1">India records consent.<br><span class="dim">It does not record understanding.</span></h1>
+  <p class="sub rv d2">Digital public infrastructure built the world's best plumbing for permission.
+  The missing record is comprehension — and India is the only country positioned to standardise it.</p>
+  <div class="by rv d3">By <b>Sridhar Dhulipala</b> · designed and launched the new Aadhaar app at UIDAI (2023–25) · founder, sax.llc</div>
+  <div class="down">Scroll</div>
+</section>
+
+<!-- SCENE -->
+<section class="scene">
+  <div class="wrap">
+    <div class="line rv">A woman in a semi-urban town reaches the consent screen of a lending app.</div>
+    <div class="line rv">She reads it, <b>or tries to</b>. She turns to her husband. He skims it. He nods.</div>
+    <div class="line rv">She taps <b>“I Agree.”</b> Her Aadhaar details move to a finance company, irreversibly —
+    and somewhere a consent artefact is written: precise, machine-readable, cryptographically auditable.</div>
+    <div class="punch rv">No record anywhere captures whether she <em>understood</em> what she permitted.</div>
+    <p class="lead rv" style="margin-top:34px;color:var(--sec);font-size:16px;line-height:1.7;max-width:680px">
+    This is not an edge case. At India's scale — twenty-two scheduled languages, a Language Diversity Index of 0.93,
+    six meaningfully different literacy bands — the gap between captured consent and actual comprehension <b style="color:var(--ink)">is the median case</b>.</p>
+  </div>
+</section>
+
+<!-- WHAT INDIA BUILT -->
+<section class="block">
+  <div class="wrap">
+    <div class="kick rv">Credit where due</div>
+    <h2 class="rv">India solved permission.</h2>
+    <p class="lead rv d1">The consent artefact gave permission a standard form: open, revocable, granular, auditable.
+    The Account Aggregator framework operationalised it. The data protection law made consent managers a regulated
+    category. <b>No other country has plumbing this good for permission.</b></p>
+  </div>
+  <div class="pull rv">But the entire stack records a decision while remaining silent on whether a decision,
+  in any cognitive sense, <em>occurred</em>.</div>
+  <div class="wrap">
+    <p class="lead rv">Legal scholars reviewing consent managers have already named the risk: a
+    <b>“consent mirage”</b> — opt-ins accumulating without understanding. The law gestures at the problem
+    (notices must be available in scheduled languages), but translation is not comprehension.
+    A perfectly translated paragraph of legalese is still legalese.</p>
+  </div>
+</section>
+
+<!-- PRIOR ART -->
+<section class="block">
+  <div class="wrap">
+    <div class="kick rv">Prior art</div>
+    <h2 class="rv">Other fields solved this decades ago — and wrote down how.</h2>
+
+    <div class="arts">
+      <div class="art hi rv"><div class="f">Medicine</div>
+        <h4>The teach-back</h4>
+        <p>Informed-consent law requires consent in a language the patient understands — and clinical practice built
+        the instrument to verify it: the patient explains the procedure back in their own words before signing.
+        Cheap, validated across hundreds of studies, and framed as a test of the explanation, not the patient.</p></div>
+      <div class="art rv d1"><div class="f">Banking · India</div>
+        <h4>Key Facts Statement</h4>
+        <p>Created because loan disclosures were technically complete and functionally unread. It compresses
+        a loan's terms into a page a borrower can actually parse — regulation moving from disclosure toward comprehension.</p></div>
+      <div class="art rv d2"><div class="f">Europe · GDPR</div>
+        <h4>Plain language, or invalid</h4>
+        <p>Consent requests must be in “clear and plain language” — unintelligible consent is legally void.
+        The burden of being understood sits with the system, not the citizen.</p></div>
+      <div class="art rv d3"><div class="f">Europe · AI Act</div>
+        <h4>Transparency duties for AI</h4>
+        <p>AI systems now carry explicit obligations to be understandable to the people they affect.
+        The same wound, twenty-four languages, no instrument.</p></div>
+    </div>
+
+    <div class="stat rv">
+      <div class="nums">
+        <span class="n from"><span id="cFrom">0</span>%</span>
+        <span class="arrow">→</span>
+        <span class="n to"><span id="cTo">0</span>%</span>
+      </div>
+      <div class="cap">When consent forms in Odisha added audio explanations in Odia, reported patient understanding
+      of treatment risk rose from roughly a third to nearly ninety percent. Comprehension is measurable —
+      and language and modality move the number dramatically.</div>
+    </div>
+
+    <div class="artnote rv">Every one of these instruments mandates the <b>input</b> — plain language, the right
+    language, a summary sheet. <b>None of them records the outcome:</b> did this person, at this moment,
+    understand this action?</div>
+  </div>
+</section>
+
+<!-- THE PROPOSAL -->
+<section class="block">
+  <div class="wrap">
+    <div class="kick rv">The proposal</div>
+    <h2 class="rv">That outcome can be a record.</h2>
+    <p class="lead rv d1">Call it the <b>comprehension artefact</b> — the human-readable counterpart to the consent artefact.</p>
+
+    <div class="pair">
+      <div class="pcard c rv"><div class="glow"></div>
+        <div class="t">Exists today</div>
+        <h3>Consent Artefact</h3>
+        <div class="says">“Permission was granted.”</div>
+        <ul><li>These data items, this purpose</li><li>This recipient, this expiry</li><li>Machine-readable, signed, auditable</li><li>Records the transaction's <b>legality</b></li></ul>
+      </div>
+      <div class="pcard k rv d1"><div class="glow"></div>
+        <div class="t">Proposed</div>
+        <h3>Comprehension Artefact</h3>
+        <div class="says">“Understanding was verified.”</div>
+        <ul><li>Explained in Hindi, grade-6 level, by voice and text</li><li>User correctly answered: shared data cannot be recalled</li><li>Two attempts, forty seconds</li><li>Records the transaction's <b>legitimacy</b></li></ul>
+      </div>
+    </div>
+    <div class="pairline rv">One without the other is a signature on a page nobody read.<br><b>Paired, they make consent mean what it claims to mean.</b></div>
+  </div>
+</section>
+
+<!-- MATERIALITY -->
+<section class="block">
+  <div class="wrap">
+    <div class="kick rv">Design principle one</div>
+    <h2 class="rv">The unit of adaptation is the moment — not the user.</h2>
+    <p class="lead rv d1">Persona-based design collapses at a billion users. What scales is classifying the
+    <b>materiality</b> of each step, so friction lands only where the stakes do.</p>
+    <div class="mat">
+      <div class="m m1 rv"><span class="ml">Informational</span><p>Browsing a screen. The system stays invisible.</p></div>
+      <div class="m m2 rv d1"><span class="ml">Navigational</span><p>Choosing an option. Light guidance, an undo path.</p></div>
+      <div class="m m3 rv d2"><span class="ml">Transactional</span><p>Submitting, paying. A plain-language account of what happens next.</p></div>
+      <div class="m m4 rv d3"><span class="ml">Consequential</span><p>Irreversible acts — biometric sharing, loan agreements. A verified checkpoint.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- THEMES -->
+<section class="block">
+  <div class="wrap">
+    <div class="kick rv">Where this goes</div>
+    <h2 class="rv">Three consequences, one frontier.</h2>
+
+    <div class="themes">
+      <div class="theme rv">
+        <div class="tt">Assisted consent<span>Design principle two</span></div>
+        <p>A failed check routes to help, not to a wall — a family member, a banking correspondent, a support line.
+        This honours a reality every Indian designer knows and no Western framework models:
+        <b>comprehension here is often a social act.</b> The person tapping the screen is not always the person
+        deciding. The artefact can record that too — who assisted, in what role — turning the most uncomfortable
+        fact about consent at scale into structured, auditable data.</p>
+      </div>
+      <div class="theme rv">
+        <div class="tt">A sovereign data asset<span>The exhaust is the alignment layer</span></div>
+        <p>Every checkpoint outcome is a labeled data point: this explanation, in this language, at this reading
+        level, did or did not land with this kind of user. Aggregated, that is <b>the largest corpus of verified
+        Indic comprehension data ever assembled</b> — exactly the alignment-layer data Indian language models lack,
+        generated as a by-product of protecting users.</p>
+      </div>
+      <div class="theme var rv">
+        <div class="tt">CognitiveVaR<span>In development</span></div>
+        <p>Finance prices market risk with Value-at-Risk. Comprehension failure is also a quantifiable exposure:
+        every mis-sold loan, every “I didn't know it would auto-debit,” every ombudsman case is a comprehension
+        failure surfacing downstream at its most expensive point. <b>Cognitive Value-at-Risk</b> is the expected
+        loss from mis-comprehension across a portfolio of transactions. Today it is real and unpriced.
+        The comprehension artefact makes it measurable — and what becomes measurable becomes manageable, insurable,
+        and ultimately a line a regulator can ask about.</p>
+      </div>
+      <div class="theme rv">
+        <div class="tt">The export<span>The UPI playbook</span></div>
+        <p>The first wave of DPI exported permission infrastructure; UPI and the consent artefact are studied
+        worldwide. The comprehension artefact is the natural successor — Europe's AI transparency rules,
+        mis-selling settlements everywhere, every consent banner ever clicked unread.
+        <b>Whoever defines the metric defines the standard.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OBJECTION -->
+<section class="block">
+  <div class="wrap">
+    <div class="kick rv">The objection</div>
+    <h2 class="rv">“Checkpoints add friction.”</h2>
+    <div class="obj">
+      <div class="ob q rv"><div class="ot">The worry</div>
+        <p>Verification slows the funnel. A recorded <b>failure</b> obligates the platform to act on it.
+        Institutions will resist creating a record that can pause their own conversion.</p></div>
+      <div class="ob a rv d1"><div class="ot">The answer</div>
+        <p>The liability already exists — it is simply unpriced. Comprehension failures currently surface
+        downstream as fraud claims, complaints and fines. The artefact moves the cost upstream, where it is
+        smaller, and gives the institution something it has never had: <b>proof that it explained itself.</b></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSE -->
+<section class="close">
+  <div class="wrap">
+    <h2 class="rv">India defined how a billion people grant permission.<br>
+    It should now define how systems <em>prove they were understood</em>.</h2>
+    <p class="lead rv d1">The models are ready — sovereign, multilingual, voice-first. The missing piece is a
+    ten-page specification: a schema, a materiality taxonomy, a verification method, conformance tests.
+    A working proof of concept already exists.</p>
+    <div class="ctarow rv d2">
+      <a class="cta solid" href="https://comprehension-artefact.vercel.app" target="_blank" rel="noopener">See the working demo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+      <a class="cta ghost" href="https://comprehension-artefact.vercel.app/index-comp" target="_blank" rel="noopener">Explore both layers
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Sridhar Dhulipala designed and launched the new Aadhaar app at UIDAI (2023–25),<br>
+  introducing selective disclosure and the show-share-verify paradigm to 23 million users.<br>
+  Founder, sax.llc · Strategic design, Purdue University · comprehension-artefact/v0.1 draft schema
+</footer>
+
+<script>
+  // progress bar
+  const prog=document.getElementById('prog');
+  addEventListener('scroll',()=>{
+    const h=document.documentElement;
+    prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  },{passive:true});
+
+  // reveal on scroll
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:0.16});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+  // animated counters for the Odisha stat
+  function count(el,to,ms){
+    const t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/ms);
+      el.textContent=Math.round(to*(1-Math.pow(1-p,3)));
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const statEl=document.querySelector('.stat');
+  const io2=new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        count(document.getElementById('cFrom'),32,1200);
+        count(document.getElementById('cTo'),89,1600);
+        io2.unobserve(e.target);
+      }
+    });
+  },{threshold:0.4});
+  if(statEl) io2.observe(statEl);
+</script>
+</body>
+</html>
