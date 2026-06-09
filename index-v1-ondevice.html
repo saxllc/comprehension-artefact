@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprehension Artefact — PoC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0e0f0c; --blue:#2563EB; --blue-d:#1D4ED8; --green:#9fe870; --green-d:#163300;
+    --mint:#e2f6d5; --orange:#FF6B00; --red:#DC2626; --red-d:#B91C1C;
+    --sec:#4B5563; --ter:#9CA3AF; --bd:#E5E7EB; --surf:#F7F8FA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-feature-settings:"calt";}
+  body{background:var(--surf);color:var(--ink);min-height:100vh;}
+
+  /* ── Top bar ── */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding:18px 28px;background:#fff;box-shadow:rgba(14,15,12,.12) 0 0 0 1px;}
+  .brand h1{font-size:18px;font-weight:700;line-height:1.25;}
+  .brand p{font-size:12px;color:var(--sec);margin-top:2px;}
+  .controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+  .seg{display:flex;background:#F3F4F6;border-radius:9999px;padding:3px;}
+  .seg button{border:0;background:transparent;color:#6B7280;font-size:13px;font-weight:600;
+    padding:8px 16px;border-radius:9999px;cursor:pointer;transition:all .15s ease;}
+  .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .seg button:hover{transform:scale(1.03);} .seg button:active{transform:scale(.97);}
+  .seg.mode button.on{background:var(--ink);color:#fff;}
+
+  /* ── Layout ── */
+  .stage{display:flex;gap:36px;align-items:flex-start;justify-content:center;padding:34px 24px 60px;flex-wrap:wrap;}
+
+  /* ── Phone frame ── */
+  .phone{width:393px;height:852px;background:#0A0A0A;border-radius:52px;padding:14px;flex:0 0 auto;
+    box-shadow:0 40px 100px rgba(0,0,0,.15),0 8px 32px rgba(0,0,0,.08);position:relative;}
+  .screen{width:100%;height:100%;background:#fff;border-radius:40px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#0A0A0A;border-radius:18px;z-index:50;}
+  .statusbar{height:48px;flex:0 0 auto;}
+  .appbar{display:flex;align-items:center;gap:10px;padding:8px 16px 12px;border-bottom:1px solid #F0F0F0;}
+  .appbar .logo{width:30px;height:30px;border-radius:8px;background:var(--blue);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .appbar .t{font-size:16px;font-weight:600;}
+  .content{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+
+  .tag{display:inline-block;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;}
+  .tag.conseq{background:#FFEBEE;color:#C62828;}
+  .card{background:#fff;border-radius:16px;padding:20px;box-shadow:rgba(14,15,12,.12) 0 0 0 1px;}
+  .card h2{font-size:20px;font-weight:700;line-height:1.25;margin-bottom:8px;}
+  .card .body{font-size:14px;line-height:1.5;color:var(--sec);}
+  .fields{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+  .field{display:flex;justify-content:space-between;align-items:center;background:var(--surf);border-radius:10px;padding:10px 12px;}
+  .field .k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ter);}
+  .field .v{font-size:13px;font-weight:600;}
+  .legal{font-size:11px;line-height:1.5;color:var(--ter);margin-top:12px;}
+  .consent-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px;}
+  .consent-row input{width:22px;height:22px;accent-color:var(--blue);flex:0 0 auto;}
+  .consent-row label{font-size:13px;line-height:1.45;color:var(--sec);}
+  .btn{border:0;width:100%;height:44px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s ease;}
+  .btn:hover{transform:scale(1.03);} .btn:active{transform:scale(.97);}
+  .btn.primary{background:var(--blue);color:#fff;} .btn.primary:hover{background:var(--blue-d);}
+  .btn.primary:disabled{background:#C7D2FE;cursor:not-allowed;transform:none;}
+  .btn.danger{background:var(--red);color:#fff;border-radius:12px;} .btn.danger:hover{background:var(--red-d);}
+  .btn.ghost{background:#F3F4F6;color:var(--sec);} .btn.ghost:hover{background:var(--bd);}
+
+  .done-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;}
+  .done-ic{width:72px;height:72px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--green-d);}
+  .done-wrap h2{font-size:20px;font-weight:700;} .done-wrap p{font-size:13px;color:var(--sec);line-height:1.5;}
+
+  /* ── Bottom sheet ── */
+  .overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .3s;z-index:60;border-radius:40px;}
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;z-index:70;
+    transform:translateY(105%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:78%;display:flex;flex-direction:column;}
+  .sheet.show{transform:translateY(0);}
+  .sheet .grab{width:36px;height:4px;border-radius:2px;background:#D1D5DB;margin:10px auto 0;}
+  .sheet .sc{padding:14px 20px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
+  .sheet h3{font-size:17px;font-weight:700;line-height:1.3;}
+  .sheet .exp{font-size:14.5px;line-height:1.6;color:var(--ink);}
+  .pausebar{display:flex;align-items:center;gap:10px;}
+  .audio-btn{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:0;background:var(--orange);color:#fff;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(255,107,0,.35);transition:all .15s ease;}
+  .audio-btn:hover{transform:scale(1.08);} .audio-btn:active{transform:scale(.95);}
+  .audio-hint{font-size:12px;color:var(--sec);}
+  .probe-opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--bd);border-radius:12px;
+    padding:13px 14px;font-size:13.5px;line-height:1.45;cursor:pointer;transition:all .15s ease;color:var(--ink);}
+  .probe-opt:hover{border-color:var(--blue);transform:scale(1.01);}
+  .probe-opt.sel-right{border-color:var(--green);background:#F7FDF4;}
+  .probe-opt.sel-wrong{border-color:var(--red);background:#FFF8F8;}
+  .note{font-size:12px;line-height:1.5;color:var(--sec);background:var(--surf);border-radius:10px;padding:10px 12px;}
+  .warn{background:#FEF3CD;color:#856404;}
+
+  /* ── Records panel ── */
+  .records{width:520px;max-width:96vw;display:flex;flex-direction:column;gap:18px;flex:0 1 auto;}
+  .records>.head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .records>.head h2{font-size:16px;font-weight:700;}
+  .records>.head span{font-size:12px;color:var(--ter);}
+  .rec{background:#fff;border-radius:16px;box-shadow:rgba(14,15,12,.12) 0 0 0 1px;overflow:hidden;}
+  .rec .rh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 18px;border-bottom:1px solid #F0F0F0;}
+  .rec .rh .lt{display:flex;flex-direction:column;gap:3px;}
+  .rec .rh .ti{font-size:14px;font-weight:700;}
+  .rec .rh .su{font-size:11px;color:var(--ter);}
+  .pill{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-radius:9999px;padding:4px 10px;}
+  .pill.machine{background:#E3F2FD;color:#1565C0;}
+  .pill.human{background:var(--mint);color:var(--green-d);}
+  .pill.none{background:#F3F4F6;color:var(--ter);}
+  .rec .rb{padding:16px 18px;}
+  .empty{border:1.5px dashed var(--bd);border-radius:12px;padding:18px;text-align:center;font-size:13px;line-height:1.55;color:var(--ter);}
+  .empty b{color:var(--red);font-weight:600;}
+  pre{font-size:11.5px;line-height:1.55;background:#0e0f0c;color:#D1FAE5;border-radius:12px;padding:14px;overflow-x:auto;white-space:pre;}
+  .hcard{background:var(--mint);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;}
+  .hcard .vh{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--green-d);}
+  .hcard .vh .dot{width:20px;height:20px;border-radius:50%;background:var(--green-d);color:var(--green);font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .hcard ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .hcard li{font-size:13px;line-height:1.5;color:var(--green-d);padding-left:18px;position:relative;}
+  .hcard li::before{content:"–";position:absolute;left:4px;}
+  .hcard .meta{font-size:11px;color:var(--green-d);opacity:.7;margin-top:4px;}
+  .hcard.failed{background:#FFF8F8;} .hcard.failed .vh{color:var(--red);} .hcard.failed li{color:var(--red-d);}
+  .hcard.failed .vh .dot{background:var(--red);color:#fff;} .hcard.failed .meta{color:var(--red-d);}
+  .jtoggle{margin-top:10px;background:none;border:0;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;padding:0;}
+  .reset{background:none;border:0;color:var(--ter);font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;}
+  .foot{text-align:center;font-size:11px;color:var(--ter);padding:0 20px 30px;line-height:1.6;}
+
+  @media(max-width:920px){.stage{flex-direction:column;align-items:center;}}
+  @media(max-width:430px){
+    .phone{width:100%;height:auto;min-height:90vh;border-radius:0;padding:0;box-shadow:none;}
+    .screen{border-radius:0;min-height:90vh;} .notch,.statusbar{display:none;}
+    .overlay{border-radius:0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <h1 id="hdTitle">Comprehension Artefact — Proof of Concept</h1>
+    <p id="hdSub">Same transaction. Two records. The consent artefact records permission; the comprehension artefact records understanding.</p>
+  </div>
+  <div class="controls">
+    <div class="seg mode">
+      <button id="mToday" onclick="setMode('today')">Today's flow</button>
+      <button id="mLayer" class="on" onclick="setMode('layer')">With comprehension layer</button>
+    </div>
+    <div class="seg">
+      <button id="lEn" class="on" onclick="setLang('en')">EN</button>
+      <button id="lHi" onclick="setLang('hi')">हिं</button>
+    </div>
+    <button class="reset" onclick="resetAll()">Reset</button>
+  </div>
+</div>
+
+<div class="stage">
+  <!-- Phone -->
+  <div class="phone"><div class="screen">
+    <div class="notch"></div><div class="statusbar"></div>
+    <div class="appbar"><div class="logo">SL</div><div class="t">SafeLoan Finance</div></div>
+    <div class="content" id="phoneContent"></div>
+    <div class="overlay" id="overlay" onclick="/* sheet is modal; no dismiss */"></div>
+    <div class="sheet" id="sheet"><div class="grab"></div><div class="sc" id="sheetContent"></div></div>
+  </div></div>
+
+  <!-- Records -->
+  <div class="records">
+    <div class="head"><h2 id="recTitle">Records generated by this transaction</h2><span id="recHint">watch this panel</span></div>
+    <div class="rec">
+      <div class="rh"><div class="lt"><div class="ti" id="caTitle">Consent Artefact</div>
+        <div class="su" id="caSub">DEPA-style · machine-readable · records permission</div></div>
+        <span class="pill machine">machine</span></div>
+      <div class="rb" id="caBody"></div>
+    </div>
+    <div class="rec">
+      <div class="rh"><div class="lt"><div class="ti" id="cmTitle">Comprehension Artefact</div>
+        <div class="su" id="cmSub">proposed · human-readable · records understanding</div></div>
+        <span class="pill" id="cmPill">—</span></div>
+      <div class="rb" id="cmBody"></div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  PoC by sax.llc · Journey Intelligence · comprehension-artefact/v0.1 draft schema ·
+  zero-dependency demo (audio uses on-device speech; production uses Sarvam Bulbul TTS)
+</div>
+
+<script>
+/* ───────────────────────── strings ───────────────────────── */
+const STR = {
+  en: {
+    consentTitle: "Verify your identity with Aadhaar eKYC",
+    consentBody: "SafeLoan Finance Ltd needs to verify your identity to open your loan account.",
+    willReceive: "SafeLoan will receive",
+    fName:"Name", fAddr:"Address", fPhoto:"Photo", fDob:"Date of birth",
+    legal:"I hereby voluntarily provide my consent to SafeLoan Finance Ltd to obtain my Aadhaar number, demographic information and photograph from UIDAI for the purpose of KYC verification under the PML Act, 2002 read with the Aadhaar Act, 2016, and to store and process the same in accordance with applicable regulations.",
+    consentLabel:"I have read and understood the above and give my consent.",
+    agree:"I Agree",
+    matTag:"CONSEQUENTIAL",
+    doneTitle:"eKYC complete",
+    doneBodyToday:"Your identity has been verified and your details shared with SafeLoan Finance Ltd.",
+    doneBodyLayer:"Your identity has been verified. A record of what you understood has been saved — see the panel on the right.",
+    doneBodyFailed:"This step has been paused. A staff-assisted session is recommended before your details are shared.",
+    /* checkpoint */
+    cpTitle:"Before you agree — what this really means",
+    exp1:"You are about to share four things with SafeLoan Finance: your name, your address, your photo, and your date of birth. Your fingerprints and eye scans will NOT be shared. One thing to know: you can stop SafeLoan from using your details in the future, but the copy already sent cannot be taken back.",
+    exp2:"Think of it like giving someone a photocopy of your ID. You can tell them: do not use it again. But the photocopy you already gave stays with them. SafeLoan will get your name, address, photo and birth date — not your fingerprints.",
+    listen:"Listen in your language",
+    stopAudio:"Stop audio",
+    cpContinue:"Continue",
+    probeTitle:"One quick check — in your own words",
+    probeNote:"This is not a test of you. It is a check that the screen explained itself properly.",
+    p1q:"If you change your mind next week, what can you do?",
+    p1a:"I can take back everything that was already shared",
+    p1b:"I can stop future use, but what was already shared stays shared",
+    p1c:"Nothing can be done once I agree",
+    p2q:"What will SafeLoan receive when you agree?",
+    p2a:"My fingerprints and eye scan",
+    p2b:"My bank balance",
+    p2c:"My name, address, photo and date of birth",
+    reexplain:"Not quite — that is the screen's fault, not yours. Here is a simpler explanation.",
+    failTitle:"Let's pause here",
+    failBody:"The explanation did not land, and this action cannot be undone once taken. We recommend doing this step with help — a family member, or SafeLoan support at 1800-XXX-XXX. Nothing has been shared yet.",
+    failBtn:"Save & exit — get help",
+    proceed:"I understand — share my details",
+    /* records */
+    notRecorded:"No record of understanding exists.<br><b>The tap was captured; comprehension was not.</b><br>If this user later says \"I did not understand what I agreed to\", there is nothing to check.",
+    waiting:"Waiting for the transaction…",
+    hcardVerified:"Understanding verified",
+    hcardFailed:"Understanding NOT verified — flow paused",
+    hu1:"My name, address, photo and date of birth go to SafeLoan Finance.",
+    hu2:"My fingerprints and eye scans are not shared.",
+    hu3:"I can stop future use, but what is shared cannot be taken back.",
+    huFail:"The teach-back check did not pass after a simpler re-explanation. The flow was paused and assisted help recommended before any data is shared.",
+    showJson:"show machine record ▾", hideJson:"hide machine record ▴",
+    recTitle:"Records generated by this transaction",
+    recHint:"watch this panel"
+  },
+  hi: {
+    consentTitle:"आधार eKYC से अपनी पहचान सत्यापित करें",
+    consentBody:"आपका लोन खाता खोलने के लिए SafeLoan Finance Ltd को आपकी पहचान सत्यापित करनी है।",
+    willReceive:"SafeLoan को यह मिलेगा",
+    fName:"नाम", fAddr:"पता", fPhoto:"फोटो", fDob:"जन्म तिथि",
+    legal:"मैं स्वेच्छा से SafeLoan Finance Ltd को सहमति देता/देती हूँ कि वह PML अधिनियम, 2002 एवं आधार अधिनियम, 2016 के अंतर्गत KYC सत्यापन हेतु UIDAI से मेरा आधार नंबर, जनसांख्यिकीय जानकारी और फोटो प्राप्त करे तथा लागू नियमों के अनुसार उसे संग्रहीत और संसाधित करे।",
+    consentLabel:"मैंने ऊपर लिखा पढ़ और समझ लिया है, और अपनी सहमति देता/देती हूँ।",
+    agree:"मैं सहमत हूँ",
+    matTag:"अति-महत्वपूर्ण",
+    doneTitle:"eKYC पूर्ण",
+    doneBodyToday:"आपकी पहचान सत्यापित हो गई है और आपकी जानकारी SafeLoan Finance Ltd को भेज दी गई है।",
+    doneBodyLayer:"आपकी पहचान सत्यापित हो गई है। आपने क्या समझा, इसका रिकॉर्ड सहेज लिया गया है — दाईं ओर का पैनल देखें।",
+    doneBodyFailed:"यह कदम रोक दिया गया है। जानकारी भेजने से पहले किसी की मदद से यह कदम पूरा करने की सलाह है।",
+    cpTitle:"सहमत होने से पहले — इसका असली मतलब",
+    exp1:"आप SafeLoan Finance के साथ चार चीज़ें साझा करने वाले हैं: आपका नाम, पता, फोटो और जन्म तिथि। आपकी उंगलियों के निशान और आँखों का स्कैन साझा नहीं होगा। एक बात जान लें: आप आगे के लिए SafeLoan को अपनी जानकारी इस्तेमाल करने से रोक सकते हैं, लेकिन जो जानकारी एक बार चली गई, वह वापस नहीं आ सकती।",
+    exp2:"इसे ऐसे समझें: जैसे आपने किसी को अपने पहचान-पत्र की फोटोकॉपी दी। आप कह सकते हैं कि आगे इसका इस्तेमाल मत करो। लेकिन जो कॉपी आपने दे दी, वह उनके पास रहेगी। SafeLoan को आपका नाम, पता, फोटो और जन्म तिथि मिलेगी — उंगलियों के निशान नहीं।",
+    listen:"अपनी भाषा में सुनें",
+    stopAudio:"आवाज़ बंद करें",
+    cpContinue:"आगे बढ़ें",
+    probeTitle:"एक छोटा सवाल — अपने शब्दों में",
+    probeNote:"यह आपकी परीक्षा नहीं है। यह जाँच है कि स्क्रीन ने अपनी बात ठीक से समझाई या नहीं।",
+    p1q:"अगर अगले हफ़्ते आपका मन बदल जाए, तो आप क्या कर सकते हैं?",
+    p1a:"जो जानकारी जा चुकी है, उसे पूरी तरह वापस ले सकता/सकती हूँ",
+    p1b:"आगे का इस्तेमाल रोक सकता/सकती हूँ, लेकिन जो जा चुका है वह वापस नहीं आएगा",
+    p1c:"सहमति देने के बाद कुछ नहीं हो सकता",
+    p2q:"सहमत होने पर SafeLoan को क्या मिलेगा?",
+    p2a:"मेरी उंगलियों के निशान और आँखों का स्कैन",
+    p2b:"मेरा बैंक बैलेंस",
+    p2c:"मेरा नाम, पता, फोटो और जन्म तिथि",
+    reexplain:"कोई बात नहीं — यह स्क्रीन की गलती है, आपकी नहीं। एक आसान तरीके से फिर समझते हैं।",
+    failTitle:"यहाँ रुकते हैं",
+    failBody:"बात पूरी तरह समझ नहीं आई, और यह कदम एक बार उठाने के बाद वापस नहीं हो सकता। सलाह है कि यह कदम किसी की मदद से करें — परिवार का कोई सदस्य, या SafeLoan सहायता 1800-XXX-XXX। अभी तक कुछ भी साझा नहीं हुआ है।",
+    failBtn:"सहेजें और बाहर निकलें — मदद लें",
+    proceed:"मैं समझ गया/गई — मेरी जानकारी साझा करें",
+    notRecorded:"समझ का कोई रिकॉर्ड मौजूद नहीं है।<br><b>टैप दर्ज हुआ; समझ दर्ज नहीं हुई।</b><br>अगर यह उपयोगकर्ता बाद में कहे \"मुझे समझ नहीं आया था\", तो जाँचने के लिए कुछ नहीं है।",
+    waiting:"लेन-देन की प्रतीक्षा…",
+    hcardVerified:"समझ सत्यापित",
+    hcardFailed:"समझ सत्यापित नहीं — प्रक्रिया रोकी गई",
+    hu1:"मेरा नाम, पता, फोटो और जन्म तिथि SafeLoan Finance को जाएगी।",
+    hu2:"मेरी उंगलियों के निशान और आँखों का स्कैन साझा नहीं होगा।",
+    hu3:"मैं आगे का इस्तेमाल रोक सकता/सकती हूँ, लेकिन जो साझा हो गया वह वापस नहीं आएगा।",
+    huFail:"आसान दोबारा-समझाने के बाद भी जाँच पास नहीं हुई। कोई जानकारी साझा करने से पहले प्रक्रिया रोक दी गई और मदद की सलाह दी गई।",
+    showJson:"मशीन रिकॉर्ड देखें ▾", hideJson:"मशीन रिकॉर्ड छिपाएँ ▴",
+    recTitle:"इस लेन-देन से बने रिकॉर्ड",
+    recHint:"यह पैनल देखें"
+  }
+};
+
+/* ───────────────────────── state ───────────────────────── */
+let S;
+function freshState(){ return {
+  mode:'layer', lang:'en', screen:'consent', sheetStage:null, checked:false,
+  attempts:0, audioPlayed:false, expVersion:1, probes:[], result:null,
+  txnRef:'TXN-'+Date.now().toString(36).toUpperCase(),
+  tStart:Date.now(), tCheckpoint:null, tCheckpointTotal:0, jsonOpen:false
+};}
+function T(k){ return STR[S.lang][k]; }
+
+/* ───────────────────────── audio (zero-key: on-device TTS) ───────────────────────── */
+let speaking=false;
+function speak(text){
+  if(!('speechSynthesis' in window)){ alert('Speech not supported in this browser.'); return; }
+  stopSpeak();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang = S.lang==='hi' ? 'hi-IN' : 'en-IN';
+  u.rate=0.95;
+  u.onend=()=>{ speaking=false; renderSheet(); };
+  speaking=true; S.audioPlayed=true;
+  speechSynthesis.speak(u);
+  renderSheet();
+}
+function stopSpeak(){ if('speechSynthesis' in window) speechSynthesis.cancel(); speaking=false; }
+
+/* ───────────────────────── flow ───────────────────────── */
+function setMode(m){ stopSpeak(); const lang=S.lang; S=freshState(); S.mode=m; S.lang=lang; renderAll(); }
+function setLang(l){ stopSpeak(); S.lang=l; renderAll(); }
+function resetAll(){ stopSpeak(); const m=S.mode,l=S.lang; S=freshState(); S.mode=m; S.lang=l; renderAll(); }
+
+function onAgree(){
+  if(!S.checked) return;
+  if(S.mode==='today'){ S.screen='done'; S.result='unverified'; renderAll(); return; }
+  S.tCheckpoint=Date.now(); S.sheetStage='explain'; renderAll();
+}
+function onContinueToProbe(){ stopSpeak(); S.sheetStage='probe'; renderAll(); }
+function onProbeAnswer(probeId, optKey, correctKey, btn){
+  const ok = optKey===correctKey;
+  S.probes.push({id:probeId, outcome: ok?'passed':'failed'});
+  btn.className='probe-opt '+(ok?'sel-right':'sel-wrong');
+  document.querySelectorAll('.probe-opt').forEach(b=>b.disabled=true);
+  setTimeout(()=>{
+    S.attempts++;
+    if(ok){ S.sheetStage='confirm'; }
+    else if(S.attempts===1){ S.expVersion=2; S.sheetStage='reexplain'; }
+    else { S.sheetStage='fail'; }
+    renderAll();
+  }, 650);
+}
+function onFinalProceed(){
+  stopSpeak();
+  S.tCheckpointTotal=Date.now()-S.tCheckpoint;
+  S.result='verified'; S.sheetStage=null; S.screen='done'; renderAll();
+}
+function onFailExit(){
+  stopSpeak();
+  S.tCheckpointTotal=Date.now()-S.tCheckpoint;
+  S.result='failed'; S.sheetStage=null; S.screen='done'; renderAll();
+}
+
+/* ───────────────────────── artefacts ───────────────────────── */
+function consentArtefact(){
+  return {
+    schema:"consent-artefact/v1 (DEPA-style)",
+    txn_ref:S.txnRef,
+    data_principal:"XX****34 (masked)",
+    data_fiduciary:"SafeLoan Finance Ltd",
+    purpose:"KYC verification — PML Act 2002 / Aadhaar Act 2016",
+    data_items:["name","address","photo","date_of_birth"],
+    consent_given_at:new Date().toISOString(),
+    expiry:"2027-06-10",
+    revocation:"future use only",
+    signature:"ES256 9f3a…c41d"
+  };
+}
+function comprehensionArtefact(){
+  return {
+    schema:"comprehension-artefact/v0.1",
+    pairs_with:S.txnRef,
+    materiality:"CONSEQUENTIAL",
+    language:S.lang==='hi'?"hi (Devanagari)":"en",
+    modality:{ text:true, audio:S.audioPlayed },
+    explanation:{ version:S.expVersion, reading_level:"~grade 6" },
+    verification:{
+      method:"teach-back probe",
+      attempts:S.attempts,
+      probes:S.probes,
+      result:S.result==='verified'?"verified":"failed — flow paused, assisted session recommended"
+    },
+    timing:{ checkpoint_ms:S.tCheckpointTotal, total_ms:Date.now()-S.tStart },
+    context:{ assisted:null, note:"assisted-consent field reserved for v0.2" },
+    recorded_at:new Date().toISOString()
+  };
+}
+
+/* ───────────────────────── renderers ───────────────────────── */
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+function renderPhone(){
+  const c=document.getElementById('phoneContent');
+  if(S.screen==='consent'){
+    c.innerHTML=`
+      ${S.mode==='layer'?`<div><span class="tag conseq">${T('matTag')}</span></div>`:''}
+      <div class="card">
+        <h2>${T('consentTitle')}</h2>
+        <div class="body">${T('consentBody')}</div>
+        <div class="fields">
+          <div class="field"><span class="k">${T('willReceive')}</span><span class="v"></span></div>
+          <div class="field"><span class="k">1</span><span class="v">${T('fName')}</span></div>
+          <div class="field"><span class="k">2</span><span class="v">${T('fAddr')}</span></div>
+          <div class="field"><span class="k">3</span><span class="v">${T('fPhoto')}</span></div>
+          <div class="field"><span class="k">4</span><span class="v">${T('fDob')}</span></div>
+        </div>
+        <div class="legal">${T('legal')}</div>
+        <div class="consent-row">
+          <input type="checkbox" id="ck" ${S.checked?'checked':''} onchange="S.checked=this.checked;renderPhone()">
+          <label for="ck">${T('consentLabel')}</label>
+        </div>
+      </div>
+      <button class="btn primary" ${S.checked?'':'disabled'} onclick="onAgree()">${T('agree')}</button>`;
+  } else {
+    const body = S.result==='failed' ? T('doneBodyFailed') : (S.mode==='today'?T('doneBodyToday'):T('doneBodyLayer'));
+    const ic = S.result==='failed' ? '⏸' : '✓';
+    c.innerHTML=`<div class="done-wrap">
+      <div class="done-ic" ${S.result==='failed'?'style="background:#FEF3CD;color:#856404"':''}>${ic}</div>
+      <h2>${S.result==='failed'?T('failTitle'):T('doneTitle')}</h2><p>${body}</p>
+      <button class="btn ghost" style="width:auto;padding:0 24px" onclick="resetAll()">↺</button>
+    </div>`;
+  }
+}
+
+function renderSheet(){
+  const sheet=document.getElementById('sheet'), ov=document.getElementById('overlay'), sc=document.getElementById('sheetContent');
+  if(!S.sheetStage){ sheet.classList.remove('show'); ov.classList.remove('show'); return; }
+  sheet.classList.add('show'); ov.classList.add('show');
+  const audioBtn=`
+    <div class="pausebar">
+      <button class="audio-btn" onclick="${speaking?'stopSpeak();renderSheet()':`speak(T('exp${S.expVersion}'))`}">
+        ${speaking
+          ?'<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><rect x="2" y="2" width="4" height="12"/><rect x="10" y="2" width="4" height="12"/></svg>'
+          :'<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z"/></svg>'}
+      </button>
+      <span class="audio-hint">${speaking?T('stopAudio'):T('listen')}</span>
+    </div>`;
+  if(S.sheetStage==='explain'){
+    sc.innerHTML=`<h3>${T('cpTitle')}</h3><div class="exp">${T('exp1')}</div>${audioBtn}
+      <button class="btn primary" onclick="onContinueToProbe()">${T('cpContinue')}</button>`;
+  }
+  else if(S.sheetStage==='reexplain'){
+    sc.innerHTML=`<div class="note warn">${T('reexplain')}</div><div class="exp">${T('exp2')}</div>${audioBtn}
+      <button class="btn primary" onclick="onContinueToProbe()">${T('cpContinue')}</button>`;
+  }
+  else if(S.sheetStage==='probe'){
+    const first=S.attempts===0;
+    const q = first?T('p1q'):T('p2q');
+    const opts = first
+      ? [['a',T('p1a')],['b',T('p1b')],['c',T('p1c')]]
+      : [['a',T('p2a')],['b',T('p2b')],['c',T('p2c')]];
+    const correct = first?'b':'c';
+    const pid = first?'reversibility':'data_scope';
+    sc.innerHTML=`<h3>${T('probeTitle')}</h3><div class="note">${T('probeNote')}</div>
+      <div class="exp" style="font-weight:600">${q}</div>
+      ${opts.map(([k,txt])=>`<button class="probe-opt" onclick="onProbeAnswer('${pid}','${k}','${correct}',this)">${txt}</button>`).join('')}`;
+  }
+  else if(S.sheetStage==='confirm'){
+    sc.innerHTML=`<h3>✓</h3><div class="exp">${T('exp'+S.expVersion)}</div>
+      <button class="btn danger" onclick="onFinalProceed()">${T('proceed')}</button>`;
+  }
+  else if(S.sheetStage==='fail'){
+    sc.innerHTML=`<h3>${T('failTitle')}</h3><div class="exp">${T('failBody')}</div>
+      <button class="btn ghost" onclick="onFailExit()">${T('failBtn')}</button>`;
+  }
+}
+
+function renderRecords(){
+  document.getElementById('recTitle').textContent=T('recTitle');
+  document.getElementById('recHint').textContent=T('recHint');
+  const ca=document.getElementById('caBody'), cm=document.getElementById('cmBody'), pill=document.getElementById('cmPill');
+  const txnDone = S.screen==='done' && S.result!=='failed';
+  /* consent artefact */
+  ca.innerHTML = txnDone
+    ? `<pre>${esc(JSON.stringify(consentArtefact(),null,2))}</pre>`
+    : `<div class="empty">${T('waiting')}</div>`;
+  /* comprehension artefact */
+  if(S.mode==='today'){
+    pill.className='pill none'; pill.textContent='absent';
+    cm.innerHTML = txnDone ? `<div class="empty">${T('notRecorded')}</div>` : `<div class="empty">${T('waiting')}</div>`;
+    return;
+  }
+  pill.className='pill human'; pill.textContent='human + machine';
+  if(S.screen!=='done'){ cm.innerHTML=`<div class="empty">${T('waiting')}</div>`; return; }
+  const failed = S.result==='failed';
+  const items = failed ? [T('huFail')] : [T('hu1'),T('hu2'),T('hu3')];
+  cm.innerHTML=`
+    <div class="hcard ${failed?'failed':''}">
+      <div class="vh"><span class="dot">${failed?'!':'✓'}</span>${failed?T('hcardFailed'):T('hcardVerified')}</div>
+      <ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>
+      <div class="meta">${S.lang==='hi'?'भाषा: हिंदी':'Language: English'} · ${new Date().toLocaleString()}</div>
+    </div>
+    <button class="jtoggle" onclick="S.jsonOpen=!S.jsonOpen;renderRecords()">${S.jsonOpen?T('hideJson'):T('showJson')}</button>
+    ${S.jsonOpen?`<pre style="margin-top:8px">${esc(JSON.stringify(comprehensionArtefact(),null,2))}</pre>`:''}`;
+  /* failed case: consent artefact must NOT exist */
+  if(failed){
+    ca.innerHTML=`<div class="empty">${S.lang==='hi'?'कोई सहमति दर्ज नहीं हुई — प्रक्रिया समझ-जाँच पर रुकी।':'No consent was recorded — the flow paused at the comprehension check.'}</div>`;
+  }
+}
+
+function renderControls(){
+  document.getElementById('mToday').className=S.mode==='today'?'on':'';
+  document.getElementById('mLayer').className=S.mode==='layer'?'on':'';
+  document.getElementById('lEn').className=S.lang==='en'?'on':'';
+  document.getElementById('lHi').className=S.lang==='hi'?'on':'';
+}
+function renderAll(){ renderControls(); renderPhone(); renderSheet(); renderRecords(); }
+
+S=freshState(); renderAll();
+</script>
+</body>
+</html>
