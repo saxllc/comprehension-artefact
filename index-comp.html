@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journey Intelligence — Two Paths</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000; --panel:#0d0d0f; --card:#151518; --line:#26262b;
+    --ink:#f5f5f7; --sec:#a1a1a6; --ter:#6e6e73;
+    --green:#9fe870; --blue:#3b82f6; --orange:#FF6B00; --red:#ff453a; --mint:#e2f6d5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);overflow-x:hidden;}
+  ::selection{background:var(--green);color:#163300;}
+
+  /* reveal-on-scroll */
+  .rv{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.2,.6,.2,1),transform .8s cubic-bezier(.2,.6,.2,1);}
+  .rv.in{opacity:1;transform:none;}
+  .rv.d1{transition-delay:.12s} .rv.d2{transition-delay:.24s} .rv.d3{transition-delay:.36s}
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 28px;}
+
+  /* ── hero ── */
+  .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 24px 40px;position:relative;}
+  .hero .kicker{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:22px;}
+  .hero h1{font-size:clamp(44px,8vw,96px);font-weight:800;line-height:1.02;letter-spacing:-.03em;}
+  .hero h1 .dim{color:var(--ter);}
+  .hero p{margin-top:26px;font-size:clamp(16px,2.2vw,21px);line-height:1.5;color:var(--sec);max-width:640px;}
+  .hero .down{position:absolute;bottom:32px;color:var(--ter);font-size:12px;letter-spacing:.14em;text-transform:uppercase;animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+  /* ── problem strip ── */
+  .strip{padding:120px 0;}
+  .strip h2{font-size:clamp(28px,4.6vw,54px);font-weight:800;letter-spacing:-.02em;line-height:1.12;max-width:840px;}
+  .strip h2 em{font-style:normal;color:var(--green);}
+  .strip p{margin-top:18px;font-size:17px;line-height:1.6;color:var(--sec);max-width:680px;}
+
+  /* ── two big path cards ── */
+  .paths{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:10px 0 60px;}
+  @media(max-width:860px){.paths{grid-template-columns:1fr;}}
+  .path{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:42px 36px;position:relative;overflow:hidden;
+    transition:transform .4s cubic-bezier(.2,.6,.2,1),border-color .4s;}
+  .path:hover{transform:translateY(-6px);border-color:#3a3a40;}
+  .path .glow{position:absolute;top:-120px;right:-120px;width:300px;height:300px;border-radius:50%;filter:blur(90px);opacity:.22;pointer-events:none;}
+  .path.a .glow{background:var(--green);} .path.b .glow{background:var(--orange);}
+  .path .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-radius:9999px;padding:6px 14px;margin-bottom:20px;}
+  .path.a .tag{background:rgba(159,232,112,.12);color:var(--green);}
+  .path.b .tag{background:rgba(255,107,0,.12);color:var(--orange);}
+  .path h3{font-size:clamp(26px,3.4vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.1;}
+  .path .q{margin-top:10px;font-size:15px;font-weight:600;color:var(--ink);}
+  .path .desc{margin-top:14px;font-size:15px;line-height:1.65;color:var(--sec);}
+  .path .who{margin-top:18px;font-size:13px;color:var(--ter);line-height:1.5;}
+  .path .who b{color:var(--sec);font-weight:600;}
+
+  /* ── deep sections ── */
+  .deep{padding:110px 0;border-top:1px solid var(--line);}
+  .deep .label{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px;}
+  .deep.a .label{color:var(--green);} .deep.b .label{color:var(--orange);}
+  .deep h2{font-size:clamp(30px,5vw,58px);font-weight:800;letter-spacing:-.025em;line-height:1.06;max-width:760px;}
+  .deep .lead{margin-top:20px;font-size:17px;line-height:1.65;color:var(--sec);max-width:660px;}
+  .steps{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:860px){.steps{grid-template-columns:1fr;}}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 24px;}
+  .step .n{font-size:13px;font-weight:800;color:var(--ter);margin-bottom:12px;}
+  .deep.a .step .n{color:var(--green);} .deep.b .step .n{color:var(--orange);}
+  .step h4{font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.3;}
+  .step p{font-size:13.5px;line-height:1.6;color:var(--sec);}
+  .proves{margin-top:36px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 28px;max-width:760px;}
+  .proves .pt{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ter);margin-bottom:10px;}
+  .proves p{font-size:15px;line-height:1.65;color:var(--ink);}
+  .ctarow{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap;}
+  .cta{display:inline-flex;align-items:center;gap:10px;border-radius:9999px;padding:16px 28px;font-size:15px;font-weight:700;
+    text-decoration:none;transition:transform .2s,filter .2s;}
+  .cta:hover{transform:scale(1.04);filter:brightness(1.1);} .cta:active{transform:scale(.97);}
+  .cta.solid-g{background:var(--green);color:#163300;}
+  .cta.solid-o{background:var(--orange);color:#fff;}
+  .cta.ghost{background:transparent;color:var(--ink);border:1px solid #3a3a40;}
+  .cta svg{flex:0 0 auto;}
+
+  /* ── stack section ── */
+  .stack{padding:120px 0;border-top:1px solid var(--line);text-align:center;}
+  .stack h2{font-size:clamp(30px,5vw,58px);font-weight:800;letter-spacing:-.025em;line-height:1.08;}
+  .stack .lead{margin:18px auto 0;font-size:17px;line-height:1.6;color:var(--sec);max-width:620px;}
+  .layers{margin:56px auto 0;max-width:560px;display:flex;flex-direction:column;gap:12px;}
+  .layer{border-radius:18px;padding:22px 26px;text-align:left;border:1px solid var(--line);background:var(--card);
+    display:flex;justify-content:space-between;align-items:center;gap:14px;}
+  .layer .lt{font-size:15px;font-weight:700;} .layer .ls{font-size:12.5px;color:var(--sec);margin-top:3px;line-height:1.45;}
+  .layer .side{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:9999px;padding:5px 11px;flex:0 0 auto;}
+  .layer.rec{border-color:rgba(159,232,112,.45);} .layer.rec .side{background:rgba(159,232,112,.12);color:var(--green);}
+  .layer.del .side{background:rgba(255,107,0,.12);color:var(--orange);}
+  .stack .closing{margin:60px auto 0;font-size:clamp(20px,3vw,30px);font-weight:700;letter-spacing:-.01em;line-height:1.3;max-width:720px;}
+  .stack .closing em{font-style:normal;color:var(--green);}
+
+  /* ── footer ── */
+  footer{border-top:1px solid var(--line);padding:48px 0 64px;text-align:center;color:var(--ter);font-size:12.5px;line-height:1.8;}
+  footer a{color:var(--sec);text-decoration:none;} footer a:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="kicker rv">Journey Intelligence · sax.llc</div>
+  <h1 class="rv d1">One problem.<br><span class="dim">Two demos.</span></h1>
+  <p class="rv d2">India's digital infrastructure can capture a tap in 22 languages.
+  It cannot yet tell whether the person understood what they tapped.
+  These two demos attack that gap from two different layers.</p>
+  <div class="down">Scroll</div>
+</section>
+
+<!-- PROBLEM -->
+<section class="strip">
+  <div class="wrap">
+    <h2 class="rv">When a consent screen is signed, a record of <em>permission</em> is written.
+    No record of <em>understanding</em> exists — anywhere.</h2>
+    <p class="rv d1">Fixing that needs two things: a standard way to <b>record</b> comprehension,
+    and a fast, multilingual way to <b>deliver</b> explanations at population scale.
+    Each demo below isolates one of these, so each can be judged on its own terms.</p>
+
+    <div class="paths" style="margin-top:60px">
+      <div class="path a rv"><div class="glow"></div>
+        <span class="tag">Path A — The Record</span>
+        <h3>Comprehension Artefact</h3>
+        <div class="q">Question it answers: “What does the institution get?”</div>
+        <div class="desc">One eKYC transaction, two records. A DEPA-style consent artefact (permission, machine-readable)
+        paired with a new comprehension artefact (understanding, human-readable) — generated only after a real
+        teach-back check passes.</div>
+        <div class="who"><b>Show this to:</b> policy, platform and regulatory audiences. CEOs, UIDAI, RBI-adjacent rooms.</div>
+      </div>
+      <div class="path b rv d1"><div class="glow"></div>
+        <span class="tag">Path B — The Delivery</span>
+        <h3>Duplex Voice + Cache Tiers</h3>
+        <div class="q">Question it answers: “Can this run at India scale?”</div>
+        <div class="desc">Voice-first explanation of the same eKYC moment: ask anything aloud, get an instant answer
+        from pre-generated narration chunks (Tier 1 cache), with live model generation (Tier 2) as fallback.</div>
+        <div class="who"><b>Show this to:</b> engineering audiences. CTOs, voice-AI teams, anyone who asks about latency and cost.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATH A DEEP -->
+<section class="deep a">
+  <div class="wrap">
+    <div class="label rv">Path A — The Record</div>
+    <h2 class="rv">The tap was always captured.<br>Now comprehension is too.</h2>
+    <p class="lead rv d1">A simulated loan-app eKYC consent. Toggle between today's flow and the comprehension layer,
+    in English or Hindi, with the checkpoint read aloud by Sarvam's Bulbul voice. Nothing here requires a server-side
+    model at demo time — it cannot fail in a room.</p>
+
+    <div class="steps">
+      <div class="step rv"><div class="n">01</div><h4>Run today's flow first</h4>
+        <p>Mode “Today's flow” → tick the box → tap I Agree. The consent artefact appears on the right.
+        The comprehension slot stays empty: <i>the tap was captured; comprehension was not.</i></p></div>
+      <div class="step rv d1"><div class="n">02</div><h4>Switch the layer on, in Hindi</h4>
+        <p>Mode “With comprehension layer” → हिं → I Agree. A grade-6 explanation appears — play the orange button
+        to hear it. Answer the teach-back question <b>wrong on purpose</b>. Watch it re-explain more simply.</p></div>
+      <div class="step rv d2"><div class="n">03</div><h4>Read the two records</h4>
+        <p>Pass the check. Both artefacts appear side by side — open “show machine record” to see the
+        comprehension-artefact/v0.1 schema: language, modality, attempts, probe outcomes, timing.</p></div>
+    </div>
+
+    <div class="proves rv">
+      <div class="pt">Why this matters</div>
+      <p>DPI standardised permission with the consent artefact. This demo shows its missing twin — a verifiable,
+      auditable record that the user understood a consequential action. Fail the check twice and the flow pauses,
+      recommends assisted help, and writes <b>no consent at all</b>. The record is honest in both directions.
+      This is the piece that can become a standard.</p>
+    </div>
+
+    <div class="ctarow rv">
+      <a class="cta solid-g" href="https://comprehension-artefact.vercel.app" target="_blank" rel="noopener">
+        Open the Record demo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PATH B DEEP -->
+<section class="deep b">
+  <div class="wrap">
+    <div class="label rv">Path B — The Delivery</div>
+    <h2 class="rv">Explanations at the speed of conversation.</h2>
+    <p class="lead rv d1">A checkpoint only works if the explanation arrives instantly, in the user's language, by voice.
+    These demos show the architecture that makes that affordable at a billion-user scale: pre-generated narration
+    served from a Redis cache (Tier 1), live model generation only on cache miss (Tier 2).</p>
+
+    <div class="steps">
+      <div class="step rv"><div class="n">01</div><h4>Talk to the duplex demo</h4>
+        <p>Open the eKYC duplex page, pick a language, and ask aloud — “kya share hoga?”, “wapas le sakta hoon?”.
+        Speech is transcribed, matched to an intent, and answered from pre-built audio chunks with near-zero wait.</p></div>
+      <div class="step rv d1"><div class="n">02</div><h4>Compare the tiers</h4>
+        <p>The tier-compare page runs the same request both ways: Tier 1 cached narration vs Tier 2 live generation.
+        The latency difference on screen IS the business case for preprocessing.</p></div>
+      <div class="step rv d2"><div class="n">03</div><h4>Connect it back</h4>
+        <p>Every cached chunk is exactly the kind of explanation Path A's checkpoint needs. Path B is the engine;
+        Path A is what the engine is for.</p></div>
+    </div>
+
+    <div class="proves rv">
+      <div class="pt">Why this matters</div>
+      <p>Comprehension cannot cost a 4-second model call per screen for a billion users. Pre-generating the known
+      journeys × languages × explanations into a cache turns the marginal cost of being understood into roughly the
+      cost of serving a file — and the duplex pattern shows voice Q&A working on top of the same cache.</p>
+    </div>
+
+    <div class="ctarow rv">
+      <a class="cta solid-o" href="https://applicationator.vercel.app/ekyc-duplex.html" target="_blank" rel="noopener">
+        Open the Duplex demo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a class="cta ghost" href="https://applicationator.vercel.app/tier-compare.html" target="_blank" rel="noopener">
+        Tier 1 vs Tier 2 comparison
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack">
+  <div class="wrap">
+    <h2 class="rv">Two layers. One system.</h2>
+    <p class="lead rv d1">In the full architecture, the record sits on top of the delivery engine.</p>
+    <div class="layers">
+      <div class="layer rec rv"><div><div class="lt">Comprehension Artefact</div>
+        <div class="ls">The standard. Materiality → checkpoint → teach-back → paired record.</div></div>
+        <span class="side">Path A</span></div>
+      <div class="layer del rv d1"><div><div class="lt">Duplex voice Q&A</div>
+        <div class="ls">Voice teach-back — the stronger verification modality, v0.4.</div></div>
+        <span class="side">Path B</span></div>
+      <div class="layer del rv d2"><div><div class="lt">Tier 1 — cached narrations (Redis)</div>
+        <div class="ls">Pre-generated journeys × languages. Instant, near-zero marginal cost.</div></div>
+        <span class="side">Path B</span></div>
+      <div class="layer del rv d3"><div><div class="lt">Tier 2 — live generation (LLM + Bulbul TTS)</div>
+        <div class="ls">Cache misses, long-tail questions, new journeys.</div></div>
+        <span class="side">Path B</span></div>
+    </div>
+    <div class="closing rv">The consent artefact records permission.<br>
+    The comprehension artefact records <em>understanding</em>.<br>India can standardise both.</div>
+  </div>
+</section>
+
+<footer>
+  Journey Intelligence · sax.llc · Sridhar Dhulipala<br>
+  <a href="https://comprehension-artefact.vercel.app" target="_blank" rel="noopener">Record demo</a> ·
+  <a href="https://applicationator.vercel.app/ekyc-duplex.html" target="_blank" rel="noopener">Duplex demo</a> ·
+  <a href="https://applicationator.vercel.app/tier-compare.html" target="_blank" rel="noopener">Tier comparison</a><br>
+  comprehension-artefact/v0.1 draft schema
+</footer>
+
+<script>
+  // reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{ threshold:0.18 });
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
