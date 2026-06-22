@@ -6,7 +6,9 @@
 <title>Comprehension Artefact — PoC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://applicationator.vercel.app/shared/sax-design.css">
 <style>
+.sax-phone-placeholder{background:transparent}
   :root{
     --ink:#0e0f0c; --blue:#2563EB; --blue-d:#1D4ED8; --green:#9fe870; --green-d:#163300;
     --mint:#e2f6d5; --orange:#FF6B00; --red:#DC2626; --red-d:#B91C1C;
@@ -163,7 +165,7 @@
 
 <div class="stage">
   <!-- Phone -->
-  <div class="phone"><div class="screen">
+  <div class="phone sax-phone" data-sax-manual><div class="screen">
     <div class="notch"></div><div class="statusbar"></div>
     <div class="appbar"><div class="logo">SL</div><div class="t">SafeLoan Finance</div></div>
     <div class="content" id="phoneContent"></div>
@@ -194,6 +196,7 @@
   voice: Sarvam Bulbul v2 via /api/tts (falls back to device voice if API unreachable)
 </div>
 
+<script src="https://applicationator.vercel.app/shared/sax-phone.js"></script>
 <script>
 /* ───────────────────────── strings ───────────────────────── */
 const STR = {
@@ -298,7 +301,7 @@ const STR = {
 /* ───────────────────────── state ───────────────────────── */
 let S;
 function freshState(){ return {
-  mode:'layer', lang:'en', screen:'consent', sheetStage:null, checked:false,
+  mode:'layer', lang:'hi', screen:'consent', sheetStage:null, checked:false,
   attempts:0, audioPlayed:false, expVersion:1, probes:[], result:null,
   txnRef:'TXN-'+Date.now().toString(36).toUpperCase(),
   tStart:Date.now(), tCheckpoint:null, tCheckpointTotal:0, jsonOpen:false
