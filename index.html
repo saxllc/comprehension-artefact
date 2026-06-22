@@ -54,9 +54,9 @@
   .field .k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ter);}
   .field .v{font-size:13px;font-weight:600;}
   .legal{font-size:11px;line-height:1.5;color:var(--ter);margin-top:12px;}
-  .consent-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px;}
-  .consent-row input{width:22px;height:22px;accent-color:var(--blue);flex:0 0 auto;}
-  .consent-row label{font-size:13px;line-height:1.45;color:var(--sec);}
+  .acceptance-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px;}
+  .acceptance-row input{width:22px;height:22px;accent-color:var(--blue);flex:0 0 auto;}
+  .acceptance-row label{font-size:13px;line-height:1.45;color:var(--sec);}
   .btn{border:0;width:100%;height:44px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s ease;}
   .btn:hover{transform:scale(1.03);} .btn:active{transform:scale(.97);}
   .btn.primary{background:var(--blue);color:#fff;} .btn.primary:hover{background:var(--blue-d);}
@@ -201,12 +201,12 @@
 /* ───────────────────────── strings ───────────────────────── */
 const STR = {
   en: {
-    consentTitle: "Verify your identity with Aadhaar eKYC",
-    consentBody: "SafeLoan Finance Ltd needs to verify your identity to open your loan account.",
+    acceptanceTitle: "Verify your identity with Aadhaar eKYC",
+    acceptanceBody: "SafeLoan Finance Ltd needs to verify your identity to open your loan account.",
     willReceive: "SafeLoan will receive",
     fName:"Name", fAddr:"Address", fPhoto:"Photo", fDob:"Date of birth",
     legal:"I hereby voluntarily provide my consent to SafeLoan Finance Ltd to obtain my Aadhaar number, demographic information and photograph from UIDAI for the purpose of KYC verification under the PML Act, 2002 read with the Aadhaar Act, 2016, and to store and process the same in accordance with applicable regulations.",
-    consentLabel:"I have read and understood the above and give my consent.",
+    acceptanceLabel:"I have read and understood the above and give my acceptance.",
     agree:"I Agree",
     matTag:"CONSEQUENTIAL",
     doneTitle:"eKYC complete",
@@ -250,12 +250,12 @@ const STR = {
     recHint:"watch this panel"
   },
   hi: {
-    consentTitle:"आधार eKYC से अपनी पहचान सत्यापित करें",
-    consentBody:"आपका लोन खाता खोलने के लिए SafeLoan Finance Ltd को आपकी पहचान सत्यापित करनी है।",
+    acceptanceTitle:"आधार eKYC से अपनी पहचान सत्यापित करें",
+    acceptanceBody:"आपका लोन खाता खोलने के लिए SafeLoan Finance Ltd को आपकी पहचान सत्यापित करनी है।",
     willReceive:"SafeLoan को यह मिलेगा",
     fName:"नाम", fAddr:"पता", fPhoto:"फोटो", fDob:"जन्म तिथि",
     legal:"मैं स्वेच्छा से SafeLoan Finance Ltd को सहमति देता/देती हूँ कि वह PML अधिनियम, 2002 एवं आधार अधिनियम, 2016 के अंतर्गत KYC सत्यापन हेतु UIDAI से मेरा आधार नंबर, जनसांख्यिकीय जानकारी और फोटो प्राप्त करे तथा लागू नियमों के अनुसार उसे संग्रहीत और संसाधित करे।",
-    consentLabel:"मैंने ऊपर लिखा पढ़ और समझ लिया है, और अपनी सहमति देता/देती हूँ।",
+    acceptanceLabel:"मैंने ऊपर लिखा पढ़ और समझ लिया है, और अपनी स्वीकृति देता/देती हूँ।",
     agree:"मैं सहमत हूँ",
     matTag:"अति-महत्वपूर्ण",
     doneTitle:"eKYC पूर्ण",
@@ -301,7 +301,7 @@ const STR = {
 /* ───────────────────────── state ───────────────────────── */
 let S;
 function freshState(){ return {
-  mode:'layer', lang:'hi', screen:'consent', sheetStage:null, checked:false,
+  mode:'layer', lang:'hi', screen:'acceptance', sheetStage:null, checked:false,
   attempts:0, audioPlayed:false, expVersion:1, probes:[], result:null,
   txnRef:'TXN-'+Date.now().toString(36).toUpperCase(),
   tStart:Date.now(), tCheckpoint:null, tCheckpointTotal:0, jsonOpen:false
@@ -438,7 +438,7 @@ function comprehensionArtefact(){
       result:S.result==='verified'?"verified":"failed — flow paused, assisted session recommended"
     },
     timing:{ checkpoint_ms:S.tCheckpointTotal, total_ms:Date.now()-S.tStart },
-    context:{ assisted:null, note:"assisted-consent field reserved for v0.2" },
+    context:{ assisted:null, note:"assisted-acceptance field reserved for v0.2" },
     recorded_at:new Date().toISOString()
   };
 }
@@ -448,12 +448,12 @@ function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
 function renderPhone(){
   const c=document.getElementById('phoneContent');
-  if(S.screen==='consent'){
+  if(S.screen==='acceptance'){
     c.innerHTML=`
       ${S.mode==='layer'?`<div><span class="tag conseq">${T('matTag')}</span></div>`:''}
       <div class="card">
-        <h2>${T('consentTitle')}</h2>
-        <div class="body">${T('consentBody')}</div>
+        <h2>${T('acceptanceTitle')}</h2>
+        <div class="body">${T('acceptanceBody')}</div>
         <div class="fields">
           <div class="field"><span class="k">${T('willReceive')}</span><span class="v"></span></div>
           <div class="field"><span class="k">1</span><span class="v">${T('fName')}</span></div>
@@ -462,9 +462,9 @@ function renderPhone(){
           <div class="field"><span class="k">4</span><span class="v">${T('fDob')}</span></div>
         </div>
         <div class="legal">${T('legal')}</div>
-        <div class="consent-row">
+        <div class="acceptance-row">
           <input type="checkbox" id="ck" ${S.checked?'checked':''} onchange="S.checked=this.checked;renderPhone()">
-          <label for="ck">${T('consentLabel')}</label>
+          <label for="ck">${T('acceptanceLabel')}</label>
         </div>
       </div>
       <button class="btn primary" ${S.checked?'':'disabled'} onclick="onAgree()">${T('agree')}</button>`;
@@ -556,7 +556,7 @@ function renderRecords(){
     ${S.jsonOpen?`<pre style="margin-top:8px">${esc(JSON.stringify(comprehensionArtefact(),null,2))}</pre>`:''}`;
   /* failed case: consent artefact must NOT exist */
   if(failed){
-    ca.innerHTML=`<div class="empty">${S.lang==='hi'?'कोई सहमति दर्ज नहीं हुई — प्रक्रिया समझ-जाँच पर रुकी।':'No consent was recorded — the flow paused at the comprehension check.'}</div>`;
+    ca.innerHTML=`<div class="empty">${S.lang==='hi'?'कोई स्वीकृति दर्ज नहीं हुई — प्रक्रिया समझ-जाँच पर रुकी।':'No acceptance was recorded — the flow paused at the comprehension check.'}</div>`;
   }
 }
 
