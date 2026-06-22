@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Materiality — L0 to L4</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --line:#2d333b; --ink:#e6edf3; --sub:#9aa4af;
+    --l0:#6b7280; --l1:#3b82f6; --l2:#22c55e; --l3:#f59e0b; --l4:#ef4444;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:32px 20px;line-height:1.45}
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.5px}
+  .lede{color:var(--sub);font-size:15px;margin-top:8px;max-width:680px}
+  .def{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:22px 0}
+  .def b{color:var(--ink)}
+  .def span{color:var(--sub)}
+  /* ladder */
+  .ladder{margin-top:26px;display:flex;flex-direction:column;gap:14px}
+  .row{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:stretch}
+  .badge{border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:700;padding:10px 6px;text-align:center}
+  .badge .lv{font-size:26px;line-height:1}
+  .badge .tag{font-size:9.5px;font-weight:600;letter-spacing:.5px;margin-top:6px;opacity:.95}
+  .card{background:var(--panel);border:1px solid var(--line);border-left-width:4px;border-radius:10px;padding:14px 16px}
+  .card h3{font-size:15px;margin-bottom:2px}
+  .card .means{color:var(--sub);font-size:13px;margin-bottom:10px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;margin-bottom:10px}
+  .meta div span{color:var(--sub)}
+  .eg{font-size:12.5px;background:#0d1117;border:1px dashed var(--line);border-radius:8px;padding:8px 10px}
+  .eg b{color:var(--sub);font-weight:600;text-transform:uppercase;font-size:10.5px;letter-spacing:.5px}
+  .b0{background:var(--l0)} .b1{background:var(--l1)} .b2{background:var(--l2)} .b3{background:var(--l3)} .b4{background:var(--l4)}
+  .c0{border-left-color:var(--l0)} .c1{border-left-color:var(--l1)} .c2{border-left-color:var(--l2)} .c3{border-left-color:var(--l3)} .c4{border-left-color:var(--l4)}
+  .l0note{font-size:11px;color:var(--sub);font-style:italic}
+  /* arrow rail */
+  .scale{display:flex;align-items:center;gap:10px;margin:24px 0 4px;font-size:12px;color:var(--sub)}
+  .scale .bar{flex:1;height:8px;border-radius:8px;background:linear-gradient(90deg,var(--l0),var(--l1),var(--l2),var(--l3),var(--l4))}
+  /* worked example */
+  .ex{margin-top:34px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .ex h2{font-size:18px;margin-bottom:4px}
+  .ex p.sub{color:var(--sub);font-size:13px;margin-bottom:16px}
+  .steps{display:flex;flex-direction:column;gap:0}
+  .step{display:grid;grid-template-columns:54px 1fr;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+  .step:first-child{border-top:none}
+  .pin{font-weight:700;color:#fff;border-radius:8px;height:34px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .step .what{font-size:14px}
+  .step .what em{color:var(--sub);font-style:normal;font-size:12.5px;display:block;margin-top:2px}
+  .tiers{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .tile h4{font-size:13px;margin-bottom:6px}
+  .tile p{font-size:12.5px;color:var(--sub)}
+  footer{margin-top:28px;color:var(--sub);font-size:11.5px;border-top:1px solid var(--line);padding-top:12px}
+  @media(max-width:640px){.row{grid-template-columns:72px 1fr}.tiers{grid-template-columns:1fr}.badge .lv{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Transaction Materiality</h1>
+  <p class="lede">The Materiality Router asks one question before every action: <b>how much does this transaction matter?</b> The answer (L1–L4) decides how much compute effort and verification to spend. Higher materiality = harder to undo = more effort + a consequence gate.</p>
+
+  <div class="def">
+    <b>Materiality</b> <span>= the weight of an action: its cost, its risk, and how hard it is to reverse. A balance check is weightless. Signing an Aadhaar mandate is heavy.</span>
+  </div>
+
+  <div class="scale">
+    <span>weightless · cheap · reversible</span>
+    <div class="bar"></div>
+    <span>heavy · costly · irreversible</span>
+  </div>
+
+  <div class="ladder">
+
+    <!-- L0 -->
+    <div class="row">
+      <div class="badge b0"><div class="lv">L0</div><div class="tag">NONE</div></div>
+      <div class="card c0">
+        <h3>Passive — no transaction <span class="l0note">(implied baseline · not a router state on the page)</span></h3>
+        <div class="means">Opening the app, scrolling, looking. Nothing changes, nothing is spent.</div>
+        <div class="meta">
+          <div><span>Effort:</span> none</div>
+          <div><span>Cost:</span> $0</div>
+          <div><span>Reversible:</span> fully (nothing happened)</div>
+        </div>
+        <div class="eg"><b>Example</b><br>Launch the app and stare at the home screen.</div>
+      </div>
+    </div>
+
+    <!-- L1 -->
+    <div class="row">
+      <div class="badge b1"><div class="lv">L1</div><div class="tag">INFORMATIONAL</div></div>
+      <div class="card c1">
+        <h3>Read-only lookup</h3>
+        <div class="means">You ask, the system tells. No money moves, no state changes.</div>
+        <div class="meta">
+          <div><span>Route:</span> T0 only (on-device)</div>
+          <div><span>Cost:</span> $0</div>
+          <div><span>Reversible:</span> n/a — nothing to undo</div>
+        </div>
+        <div class="eg"><b>Example</b><br>“What’s my balance?” — answered instantly, no narration needed.</div>
+      </div>
+    </div>
+
+    <!-- L2 -->
+    <div class="row">
+      <div class="badge b2"><div class="lv">L2</div><div class="tag">NAVIGATIONAL</div></div>
+      <div class="card c2">
+        <h3>Small, routine, known</h3>
+        <div class="means">A tiny everyday money move to someone/something already known. Low stakes.</div>
+        <div class="meta">
+          <div><span>Route:</span> T0 → T1 cache</div>
+          <div><span>Cost:</span> ~$0 (cache lookup)</div>
+          <div><span>Reversible:</span> low impact if wrong</div>
+        </div>
+        <div class="eg"><b>Examples</b><br>P2P send under ₹500 · scan a P2M shop QR to pay.</div>
+      </div>
+    </div>
+
+    <!-- L3 -->
+    <div class="row">
+      <div class="badge b3"><div class="lv">L3</div><div class="tag">TRANSACTIONAL</div></div>
+      <div class="card c3">
+        <h3>Real money, larger or unknown party</h3>
+        <div class="means">A meaningful payment, or a payee the system isn’t sure about. Worth a closer look.</div>
+        <div class="meta">
+          <div><span>Route:</span> T0 → T1/T2 (cache, fall back to live)</div>
+          <div><span>Cost:</span> $0–$0.01</div>
+          <div><span>Reversible:</span> hard once sent</div>
+        </div>
+        <div class="eg"><b>Examples</b><br>P2P over ₹5,000 to an unknown payee · add a beneficiary · place an ONDC order.</div>
+      </div>
+    </div>
+
+    <!-- L4 -->
+    <div class="row">
+      <div class="badge b4"><div class="lv">L4</div><div class="tag">CONSEQUENTIAL</div></div>
+      <div class="card c4">
+        <h3>Irreversible & high-stakes</h3>
+        <div class="means">Granting standing authority or signing something you can’t take back. Maximum care.</div>
+        <div class="meta">
+          <div><span>Route:</span> T0 → T1/T2 → <b>CAS gate</b></div>
+          <div><span>Cost:</span> ~$0.01–$0.03 (max effort)</div>
+          <div><span>Reversible:</span> no — locked once confirmed</div>
+        </div>
+        <div class="eg"><b>Examples</b><br>NACH mandate · UPI AutoPay setup · eKYC / Aadhaar digital sign · credit-line activation · token lock (Finternet).</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- worked example -->
+  <div class="ex">
+    <h2>One person, climbing the ladder</h2>
+    <p class="sub">Sunita (migrant worker) opens her wallet app. Watch the materiality rise — and the router respond.</p>
+    <div class="steps">
+      <div class="step"><div class="pin b0">L0</div><div class="what">She opens the app and looks around.<em>Nothing happens. No cost, nothing to undo.</em></div></div>
+      <div class="step"><div class="pin b1">L1</div><div class="what">“How much do I have?” → balance shown.<em>Read-only. Answered on-device, free.</em></div></div>
+      <div class="step"><div class="pin b2">L2</div><div class="what">Sends ₹200 to her usual tea stall via QR.<em>Small + known → quick cache lookup, ~$0.</em></div></div>
+      <div class="step"><div class="pin b3">L3</div><div class="what">Sends ₹8,000 to a new landlord she hasn’t paid before.<em>Big + unknown → cache, then verify live. Harder to undo.</em></div></div>
+      <div class="step"><div class="pin b4">L4</div><div class="what">Sets up a recurring UPI AutoPay for monthly rent.<em>Standing, irreversible authority → max effort + CAS gate before it locks.</em></div></div>
+    </div>
+  </div>
+
+  <!-- supporting concepts -->
+  <div class="tiers">
+    <div class="tile"><h4>T0 / T1 / T2 — effort tiers</h4><p>How hard the system works to answer. T0 = on-device (cheapest), T1 = cache lookup, T2 = live verification (most effort). Higher materiality pulls in higher tiers.</p></div>
+    <div class="tile"><h4>CAS gate — consequence check</h4><p>The stop sign at L4. Before an irreversible action, the system surfaces “what happens if you proceed” and forces an explicit confirm or decline.</p></div>
+  </div>
+
+  <footer>
+    Source: applicationator.vercel.app/materiality-router.html — the page defines four router states, <b>L1–L4</b> (no L0). L0 is shown here as the natural “no-transaction” baseline for completeness and is labeled as such. Costs, routes, and examples are taken directly from the page.
+  </footer>
+
+</div>
+</body>
+</html>
